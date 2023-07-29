@@ -1,0 +1,1414 @@
+[
+  {
+    "type": "constructor",
+    "name": "",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "_nativeTokenWrapper",
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "_defaultAdmin",
+        "internalType": "address"
+      },
+      {
+        "type": "string",
+        "name": "_contractURI",
+        "internalType": "string"
+      },
+      {
+        "type": "address[]",
+        "name": "_trustedForwarders",
+        "internalType": "address[]"
+      },
+      {
+        "type": "address",
+        "name": "_platformFeeRecipient",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "_platformFeeBps",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint64",
+        "name": "_listPriceBpsIncrease",
+        "internalType": "uint64"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "AuctionBuffersUpdated",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "timeBuffer",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "bidBufferBps",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "AuctionClosed",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "closer",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "bool",
+        "name": "cancelled",
+        "indexed": true,
+        "internalType": "bool"
+      },
+      {
+        "type": "address",
+        "name": "auctionCreator",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "winningBidder",
+        "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Initialized",
+    "inputs": [
+      {
+        "type": "uint8",
+        "name": "version",
+        "indexed": false,
+        "internalType": "uint8"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ListingAdded",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "assetContract",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "lister",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "tuple",
+        "name": "listing",
+        "components": [
+          {
+            "type": "uint256",
+            "name": "listingId",
+            "internalType": "uint256"
+          },
+          {
+            "type": "address",
+            "name": "tokenOwner",
+            "internalType": "address"
+          },
+          {
+            "type": "address",
+            "name": "assetContract",
+            "internalType": "address"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint256",
+            "name": "startTime",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint256",
+            "name": "endTime",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint256",
+            "name": "quantity",
+            "internalType": "uint256"
+          },
+          {
+            "type": "address",
+            "name": "currency",
+            "internalType": "address"
+          },
+          {
+            "type": "uint256",
+            "name": "reservePricePerToken",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint256",
+            "name": "buyoutPricePerToken",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint8",
+            "name": "tokenType",
+            "internalType": "enum INFTreasuryMarketplace.TokenType"
+          },
+          {
+            "type": "uint8",
+            "name": "listingType",
+            "internalType": "enum INFTreasuryMarketplace.ListingType"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct INFTreasuryMarketplace.Listing"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ListingRemoved",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "listingCreator",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ListingUpdated",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "listingCreator",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "NewOffer",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "offeror",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "uint8",
+        "name": "listingType",
+        "indexed": true,
+        "internalType": "enum INFTreasuryMarketplace.ListingType"
+      },
+      {
+        "type": "uint256",
+        "name": "quantityWanted",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "totalOfferAmount",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "currency",
+        "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "NewSale",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "assetContract",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "lister",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "buyer",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "quantityBought",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "totalPricePaid",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "PlatformFeeInfoUpdated",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "platformFeeRecipient",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "platformFeeBps",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleAdminChanged",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "type": "bytes32",
+        "name": "previousAdminRole",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "type": "bytes32",
+        "name": "newAdminRole",
+        "indexed": true,
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleGranted",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "type": "address",
+        "name": "account",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "sender",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleRevoked",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "type": "address",
+        "name": "account",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "sender",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "anonymous": false
+  },
+  {
+    "type": "function",
+    "name": "DEFAULT_ADMIN_ROLE",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "bytes32",
+        "name": "",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "LIST_PRICE_BPS_INCREASE",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": "",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "MAX_BPS",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": "",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "acceptOffer",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_listingId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "_offeror",
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "_currency",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "_pricePerToken",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "bidBufferBps",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": "",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "buy",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_listingId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "_buyFor",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "_quantityToBuy",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "_currency",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "_totalPrice",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "cancelDirectListing",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_listingId",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "closeAuction",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_listingId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "_closeFor",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "contractType",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "bytes32",
+        "name": "",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "contractURI",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "string",
+        "name": "",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "contractVersion",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint8",
+        "name": "",
+        "internalType": "uint8"
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "createListing",
+    "inputs": [
+      {
+        "type": "tuple",
+        "name": "_params",
+        "components": [
+          {
+            "type": "address",
+            "name": "assetContract",
+            "internalType": "address"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint256",
+            "name": "startTime",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint256",
+            "name": "secondsUntilEndTime",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint256",
+            "name": "quantityToList",
+            "internalType": "uint256"
+          },
+          {
+            "type": "address",
+            "name": "currencyToAccept",
+            "internalType": "address"
+          },
+          {
+            "type": "uint256",
+            "name": "reservePricePerToken",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint256",
+            "name": "buyoutPricePerToken",
+            "internalType": "uint256"
+          },
+          {
+            "type": "uint8",
+            "name": "listingType",
+            "internalType": "enum INFTreasuryMarketplace.ListingType"
+          }
+        ],
+        "internalType": "struct INFTreasuryMarketplace.ListingParameters"
+      },
+      {
+        "type": "address",
+        "name": "tokenOwner",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getPlatformFeeInfo",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      },
+      {
+        "type": "uint16",
+        "name": "",
+        "internalType": "uint16"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getRoleAdmin",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bytes32",
+        "name": "",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getRoleMember",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32"
+      },
+      {
+        "type": "uint256",
+        "name": "index",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getRoleMemberCount",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256",
+        "name": "",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "grantRole",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32"
+      },
+      {
+        "type": "address",
+        "name": "account",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "hasRole",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32"
+      },
+      {
+        "type": "address",
+        "name": "account",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bool",
+        "name": "",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "initialize",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "_defaultAdmin",
+        "internalType": "address"
+      },
+      {
+        "type": "string",
+        "name": "_contractURI",
+        "internalType": "string"
+      },
+      {
+        "type": "address[]",
+        "name": "_trustedForwarders",
+        "internalType": "address[]"
+      },
+      {
+        "type": "address",
+        "name": "_platformFeeRecipient",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "_platformFeeBps",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint64",
+        "name": "_listPriceBpsIncrease",
+        "internalType": "uint64"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "isTrustedForwarder",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "forwarder",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bool",
+        "name": "",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "listings",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "tokenOwner",
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "assetContract",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "tokenId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "startTime",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "endTime",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "quantity",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "currency",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "reservePricePerToken",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "buyoutPricePerToken",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint8",
+        "name": "tokenType",
+        "internalType": "enum INFTreasuryMarketplace.TokenType"
+      },
+      {
+        "type": "uint8",
+        "name": "listingType",
+        "internalType": "enum INFTreasuryMarketplace.ListingType"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "mainNFT",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "multicall",
+    "inputs": [
+      {
+        "type": "bytes[]",
+        "name": "data",
+        "internalType": "bytes[]"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bytes[]",
+        "name": "results",
+        "internalType": "bytes[]"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "offer",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_listingId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "_quantityWanted",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "_currency",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "_pricePerToken",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "_expirationTimestamp",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "offers",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "offeror",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "quantityWanted",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "currency",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "pricePerToken",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "expirationTimestamp",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "onERC1155BatchReceived",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256[]",
+        "name": "",
+        "internalType": "uint256[]"
+      },
+      {
+        "type": "uint256[]",
+        "name": "",
+        "internalType": "uint256[]"
+      },
+      {
+        "type": "bytes",
+        "name": "",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bytes4",
+        "name": "",
+        "internalType": "bytes4"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "onERC1155Received",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "",
+        "internalType": "uint256"
+      },
+      {
+        "type": "bytes",
+        "name": "",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bytes4",
+        "name": "",
+        "internalType": "bytes4"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "onERC721Received",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      },
+      {
+        "type": "address",
+        "name": "",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "",
+        "internalType": "uint256"
+      },
+      {
+        "type": "bytes",
+        "name": "",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bytes4",
+        "name": "",
+        "internalType": "bytes4"
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "renounceRole",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32"
+      },
+      {
+        "type": "address",
+        "name": "account",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "revokeRole",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32"
+      },
+      {
+        "type": "address",
+        "name": "account",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setAuctionBuffers",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_timeBuffer",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "_bidBufferBps",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setContractURI",
+    "inputs": [
+      {
+        "type": "string",
+        "name": "_uri",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setListPriceBpsIncrease",
+    "inputs": [
+      {
+        "type": "uint64",
+        "name": "_BPS_INCREASE",
+        "internalType": "uint64"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setMainNFT",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "_mainNFT",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setPlatformFeeInfo",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "_platformFeeRecipient",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "_platformFeeBps",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "supportsInterface",
+    "inputs": [
+      {
+        "type": "bytes4",
+        "name": "interfaceId",
+        "internalType": "bytes4"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "bool",
+        "name": "",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "timeBuffer",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint64",
+        "name": "",
+        "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "totalListings",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint256",
+        "name": "",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "updateListing",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_listingId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "_quantityToList",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "_reservePricePerToken",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "_buyoutPricePerToken",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "_currencyToAccept",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "_startTime",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "_secondsUntilEndTime",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "winningBid",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256",
+        "name": "listingId",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "offeror",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "quantityWanted",
+        "internalType": "uint256"
+      },
+      {
+        "type": "address",
+        "name": "currency",
+        "internalType": "address"
+      },
+      {
+        "type": "uint256",
+        "name": "pricePerToken",
+        "internalType": "uint256"
+      },
+      {
+        "type": "uint256",
+        "name": "expirationTimestamp",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "receive",
+    "name": "",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "payable"
+  }
+]
