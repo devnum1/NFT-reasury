@@ -30,6 +30,17 @@ export function BugFix() {
                     })
                 }
             </div>
+            <div className='footer'>
+                <div className=''>
+                    <p>
+                        I am a senior full stack developer witn nearly ten years of experience in software development.
+                        My main skils include React and Vue on the frontend, and on the backend I favor Golang and Node.js
+                    </p>
+                    <p></p>
+                </div>
+                <div className=''></div>
+                <div className=''></div>
+            </div>
         </>
     )
 }

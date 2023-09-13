@@ -43,7 +43,7 @@ const HeroCarousel = ({ onSelect, nfts, loading }) => (
           mt={2.5}
           color="text.tertiary"
         >
-          earn 10% profit with every trade
+          earn with every trade
         </Typography>
       </m.div>
       <NftSlider data={nfts} onSelect={onSelect} loading={loading} />

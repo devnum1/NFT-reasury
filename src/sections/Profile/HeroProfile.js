@@ -13,6 +13,8 @@ import useFirebaseDocument from 'src/lib/useFirebaseUserDocument';
 import { truncateMiddle } from 'src/utils/text';
 import initializeFirebaseClient from 'src/lib/initFirebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import nftsApi from 'pages/api/nfts';
+import history from 'page/api/history'
 
 const RootStyle = styled('section')(({ theme }) => ({
   padding: theme.spacing('180px', 0, '100px'),
@@ -118,34 +120,71 @@ const HeroProfile = () => {
   const address = useAddress();
   const { document: user } = useFirebaseDocument();
 
-  const fetchFromTransactions = useCallback(async () => {
-    let transactions = [];
-    const transactionCollection = collection(db, 'transactions');
-    const transactionQuery = query(transactionCollection, where('from', '==', address), where('action', '==', 'sold'));
-    const querySnapshot = await getDocs(transactionQuery);
-    querySnapshot.forEach(async (snap) => {
-      if (snap.exists()) {
-        const data = snap.data();
-        transactions.push(data);
-      }
-    });
-    setSellingTransactions(transactions);
-    setTotalSelling(transactions.length);
-  }, [address, db]);
+  // const fetchToTransactions = useCallback(async () => {
+  //   let data = await nftsApi({
+  //     page: 1,
+  //     limit: 100,
+  //     sortBy: "MOST_RECENT",
+  //     owner: address
+  //   });
+  //   let transactions = []
+  //   data.records.forEach(async (item) => {
+  //     let transaction = {
+  //       price: parseFloat(item.buyFor) * 10 / 11
+  //     }
+  //     transactions.push(transaction)
+  //   })
+  //   setTotalBuying(data.records.length)
+  //   setBuyingTransactions(transactions);
+  // }, [address, db]);
 
   const fetchToTransactions = useCallback(async () => {
-    let transactions = [];
-    const transactionCollection = collection(db, 'transactions');
-    const transactionQuery = query(transactionCollection, where('to', '==', address), where('action', '==', 'buy'));
-    const querySnapshot = await getDocs(transactionQuery);
-    querySnapshot.forEach(async (snap) => {
-      if (snap.exists()) {
-        const data = snap.data();
-        transactions.push(data);
-      }
+    let data = await history({
+      address: address
     });
+
+    let transactions = []
+    
+    data.bought.forEach(async (item) => {
+      let transaction = {
+        price: parseFloat(item.price)
+      }
+      transactions.push(transaction)
+    })
+    setTotalBuying(data.bought.length)
     setBuyingTransactions(transactions);
-    setTotalBuying(transactions.length);
+  }, [address, db]);
+  
+  // const fetchFromTransactions = useCallback(async () => {
+  //   let transactions = [];
+  //   const transactionCollection = collection(db, 'transactions');
+  //   const transactionQuery = query(transactionCollection, where('from', '==', address), where('action', '==', 'sold'));
+  //   const querySnapshot = await getDocs(transactionQuery);
+  //   querySnapshot.forEach(async (snap) => {
+  //     if (snap.exists()) {
+  //       const data = snap.data();
+  //       transactions.push(data);
+  //     }
+  //   });
+  //   setSellingTransactions(transactions);
+  //   setTotalSelling(transactions.length);
+  // }, [address, db]);
+
+  const fetchFromTransactions = useCallback(async () => {
+    let data = await history({
+      address: address
+    });
+
+    let transactions = []
+    
+    data.sold.forEach(async (item) => {
+      let transaction = {
+        price: parseFloat(item.price)
+      }
+      transactions.push(transaction)
+    })
+    setSellingTransactions(transactions);
+    setTotalSelling(data.sold.length);
   }, [address, db]);
 
   useEffect(() => {
@@ -162,7 +201,7 @@ const HeroProfile = () => {
     const totalBuying = sumBy(buyingTransactions.map((buy) => parseFloat(buy.price)));
     // const totalFilteredBuying = sumBy(filteredSold.map((buy) => parseFloat(buy.price)));
     // const profit = totalSelling - totalFilteredBuying;
-    const profit = totalSelling - totalBuying;
+    const profit = (totalSelling - totalBuying) * Math.pow(10, -18);
     return profit > 0 ? profit : 0;
   }, [sellingTransactions, buyingTransactions]);
 

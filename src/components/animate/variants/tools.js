@@ -65,12 +65,6 @@ const RoutingRuleModal: React.FC<IRoutingRuleModalProps> = (props) => {
 
   const handleSaveRoutingRule = async (rule: RoutingRuleRecord) => {
     // reconstruct opsgenie team names/ids
-    rule.opsGenieTeamList = [];
-    rule.opsGenieTeamIDList = [];
-    rule.opsGenieTeams?.forEach((team) => {
-      rule.opsGenieTeamList?.push(team.label);
-      rule.opsGenieTeamIDList?.push(team.value);
-    });
     const slackGroups: Array<{ id: string; name: string }> = [];
     const groupIds: Record<string, boolean> = {};
     rule.slackGroupsList?.forEach((sg) => {

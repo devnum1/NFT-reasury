@@ -146,6 +146,7 @@ export default function NftListings({ selectNft, isRefresh }) {
       isListed: true,
       sortBy: sortBy,
     });
+    console.log("[data]", data)
     if (data?.name === 'AxiosError') {
       data = await nftsApi({
         page: 1,
@@ -171,7 +172,7 @@ export default function NftListings({ selectNft, isRefresh }) {
       sortBy: sortBy,
     });
 
-    const dataMapping = data.map((c) => ({
+    const dataMapping = data?.map((c) => ({
       label: c.category,
       value: c.category,
       count: c.count,
@@ -195,6 +196,7 @@ export default function NftListings({ selectNft, isRefresh }) {
       isListed: true,
       sortBy: sortBy,
     });
+    console.log("[data]", data)
     if (data?.name === 'AxiosError') {
       data = await nftsApi({
         page: page,

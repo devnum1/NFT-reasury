@@ -52,17 +52,17 @@ export default function Favorites({ selectNft = () => {}, user, refresh }) {
     let data;
     data = await nftsApi({
       page: page,
-      likedBy: user.uid,
+      likedBy: address,
       isProfile: false,
     });
     if (data?.name === 'AxiosError') {
       data = await nftsApi({
         page: page,
-        likedBy: user.uid,
+        likedBy: address,
         isProfile: false,
       });
     } else {
-      setListNfts([...listNfts, ...data.records]);
+      setListNfts(data.records);
       setPageCount(data.metadata.pageCount);
       setIsLoading(false);
     }

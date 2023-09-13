@@ -47,24 +47,24 @@ export default function MyCollections({ selectNft = () => {}, user, refresh }) {
 
   // Fetch Data Listing
   const fetchNfts = async () => {
-    if (user) {
+    if (address) {
       setIsLoading(true);
       let data;
       data = await nftsApi({
         page: page,
-        owner: user?.uid,
-        isListed: false,
-        isProfile: true,
+        owner: address,
+        isListed: false
       });
       if (data?.name === 'AxiosError') {
         data = await nftsApi({
           page: page,
-          owner: user?.uid,
+          owner: address,
           isListed: false,
           isProfile: true,
         });
       } else {
-        setListNfts([...listNfts, ...data.records]);
+        console.log(data)
+        setListNfts(data.records);
         setPageCount(data.metadata.pageCount);
         setIsLoading(false);
       }
