@@ -87,6 +87,7 @@ export default function ProfileNfts({ selectNft = () => {} }) {
   const isSmallScreen = useResponsive('down', 'md');
   const isMobile = useResponsive('down', 'sm');
   const dir = Number(sortBy) === 2 ? 'asc' : 'desc';
+  alert("herer")
 
   const { data, error, mutate, size, setSize, isValidating } = useSWRInfinite(
     (index) =>
@@ -95,6 +96,9 @@ export default function ProfileNfts({ selectNft = () => {} }) {
       }&order_by=sell_price&dir=${dir}&search=${debouncedSearch}`,
     listFetcher
   );
+
+  console.log("data", data);
+  alert("herer")
 
   const nfts = data ? [].concat(...data) : [];
   const isLoadingInitialData = !data && !error;
